@@ -117,7 +117,7 @@ namespace json {
             if (!input) {
                 throw ParsingError("Array parsing error"s);
             }
-            return Node(std::move(result));
+            return Node{std::move(result)};
         }
 
         Node LoadDict(std::istream& input) {
@@ -141,7 +141,7 @@ namespace json {
             if (!input) {
                 throw ParsingError("Dictionary parsing error"s);
             }
-            return Node(std::move(dict));
+            return Node{std::move(dict)};
         }
 
         Node LoadString(std::istream& input) {
@@ -189,7 +189,7 @@ namespace json {
                 ++it;
             }
 
-            return Node(std::move(s));
+            return Node{std::move(s)};
         }
 
         Node LoadBool(std::istream& input) {
@@ -359,12 +359,12 @@ namespace json {
         }
 
         template <>
-        void PrintValue<Array>(const Array& nodes, const PrintContext& ctx) {
+        void PrintValue<Array>(const Array& value, const PrintContext& ctx) {
             std::ostream& out = ctx.out;
             out << "[\n"sv;
             bool first = true;
             auto inner_ctx = ctx.Indented();
-            for (const Node& node : nodes) {
+            for (const Node& node : value) {
                 if (first) {
                     first = false;
                 } else {
@@ -379,12 +379,12 @@ namespace json {
         }
 
         template <>
-        void PrintValue<Dict>(const Dict& nodes, const PrintContext& ctx) {
+        void PrintValue<Dict>(const Dict& value, const PrintContext& ctx) {
             std::ostream& out = ctx.out;
             out << "{\n"sv;
             bool first = true;
             auto inner_ctx = ctx.Indented();
-            for (const auto& [key, node] : nodes) {
+            for (const auto& [key, node] : value) {
                 if (first) {
                     first = false;
                 } else {
@@ -417,4 +417,5 @@ namespace json {
     void Print(const Document& doc, std::ostream& output) {
         PrintNode(doc.GetRoot(), PrintContext{output});
     }
-}
+
+} // namespace

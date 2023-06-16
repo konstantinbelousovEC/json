@@ -1,6 +1,8 @@
 #include "tests.h"
-#include "../include/json.h"
 #include "log-duration.h"
+
+#include "../include/json.h"
+#include "../include/json-builder.h"
 
 #include <chrono>
 
@@ -8,53 +10,14 @@ namespace tests {
 
     using namespace std::string_literals;
 
-    std::string PrintNode(const json::Node& node) {
-        std::ostringstream out;
-        Print(json::Document{node}, out);
-        return out.str();
-    }
-
-    json::Document LoadJSON(const std::string& s) {
-        std::istringstream strm(s);
-        return json::Load(strm);
-    }
-
-    void must_fail_to_load(const std::string& s) {
-        using namespace std::string_view_literals;
-
-        try {
-            LoadJSON(s);
-            std::cerr << "ParsingError exception is expected on '"sv << s << "'"sv << std::endl;
-            ASSERT(false)
-        } catch (const json::ParsingError&) {
-            // ok
-        } catch (const std::exception& e) {
-            std::cerr << "exception thrown: "sv << e.what() << std::endl;
-            ASSERT(false)
-        } catch (...) {
-            std::cerr << "Unexpected error"sv << std::endl;
-            ASSERT(false)
-        }
-    }
+    // ------------- supportive functions declarations -------------
+    std::string PrintNode(const json::Node& node);
+    json::Document LoadJSON(const std::string& s);
+    void must_fail_to_load(const std::string& s);
 
     template <typename Fn>
-    void must_throw_logic_error(Fn fn) {
-        using namespace std::string_view_literals;
-
-        try {
-            fn();
-            std::cerr << "logic_error is expected"sv << std::endl;
-            ASSERT(false)
-        } catch (const std::logic_error&) {
-            // ok
-        } catch (const std::exception& e) {
-            std::cerr << "exception thrown: "sv << e.what() << std::endl;
-            ASSERT(false)
-        } catch (...) {
-            std::cerr << "Unexpected error"sv << std::endl;
-            ASSERT(false)
-        }
-    }
+    void must_throw_logic_error(Fn fn);
+    // ------------------------------------------------------------
 
     void json_null_node_constructor() {
         json::Node null_node;
@@ -265,6 +228,47 @@ namespace tests {
 
     }
 
+    void json_builder() {
+        std::stringstream ss;
+        auto doc1 = json::Document{
+                json::Builder{}
+                        .StartDict()
+                            .Key("key1"s).Value(123)
+                            .Key("key2"s).Value("value2"s)
+                            .Key("key3"s).StartArray()
+                                                .Value(456)
+                                                .StartDict()
+                                                .EndDict()
+                                                .StartDict()
+                                                        .Key(""s).Value(nullptr)
+                                                .EndDict()
+                                                .Value(""s)
+                                         .EndArray()
+                        .EndDict()
+                        .Build()
+        };
+
+        json::Print(doc1, ss);
+        json::Document doc2 = json::Load(ss);
+
+        ASSERT(doc1 == doc2);
+
+//        Правила построения цепочек вызовов методов json builder
+
+//        1. Непосредственно после Key вызван не Value, не StartDict и не StartArray.
+//        2. После вызова Value, последовавшего за вызовом Key, вызван не Key и не EndDict.
+//        3. За вызовом StartDict следует не Key и не EndDict.
+//        4. За вызовом StartArray следует не Value, не StartDict, не StartArray и не EndArray.
+//        5. После вызова StartArray и серии Value следует не Value, не StartDict, не StartArray и не EndArray.
+
+//        json::Builder{}.StartDict().Build();  // правило 3
+//        json::Builder{}.StartDict().Key("1"s).Value(1).Value(1);  // правило 2
+//        json::Builder{}.StartDict().Key("1"s).Key(""s);  // правило 1
+//        json::Builder{}.StartArray().Key("1"s);  // правило 4
+//        json::Builder{}.StartArray().EndDict();  // правило 4
+//        json::Builder{}.StartArray().Value(1).Value(2).EndDict();  // правило 5
+    }
+
     void RunTest() {
         TestRunner tr;
 
@@ -275,8 +279,59 @@ namespace tests {
         RUN_TEST(tr, json_array_values);
         RUN_TEST(tr, json_dictionary_values);
         RUN_TEST(tr, json_error_handling);
+        RUN_TEST(tr, json_builder);
 
         benchmark();
     }
 
-}
+    // ------------- supportive functions definitions -------------
+    std::string PrintNode(const json::Node& node) {
+        std::ostringstream out;
+        Print(json::Document{node}, out);
+        return out.str();
+    }
+
+    json::Document LoadJSON(const std::string& s) {
+        std::istringstream strm(s);
+        return json::Load(strm);
+    }
+
+    void must_fail_to_load(const std::string& s) {
+        using namespace std::string_view_literals;
+
+        try {
+            LoadJSON(s);
+            std::cerr << "ParsingError exception is expected on '"sv << s << "'"sv << std::endl;
+            ASSERT(false)
+        } catch (const json::ParsingError&) {
+            // ok
+        } catch (const std::exception& e) {
+            std::cerr << "exception thrown: "sv << e.what() << std::endl;
+            ASSERT(false)
+        } catch (...) {
+            std::cerr << "Unexpected error"sv << std::endl;
+            ASSERT(false)
+        }
+    }
+
+    template <typename Fn>
+    void must_throw_logic_error(Fn fn) {
+        using namespace std::string_view_literals;
+
+        try {
+            fn();
+            std::cerr << "logic_error is expected"sv << std::endl;
+            ASSERT(false)
+        } catch (const std::logic_error&) {
+            // ok
+        } catch (const std::exception& e) {
+            std::cerr << "exception thrown: "sv << e.what() << std::endl;
+            ASSERT(false)
+        } catch (...) {
+            std::cerr << "Unexpected error"sv << std::endl;
+            ASSERT(false)
+        }
+    }
+    // ------------------------------------------------------------
+
+} // namespace
