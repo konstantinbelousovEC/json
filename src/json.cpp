@@ -1,8 +1,7 @@
 #include "../include/json.h"
 
-#include <iterator>
-
 namespace json {
+
     using namespace std::literals;
 
     // class Node definitions --------------------------------------------------
@@ -314,7 +313,7 @@ namespace json {
             }
         };
 
-        void PrintNode(const Node& value, const PrintContext& ctx);
+        void PrintNode(const Node& node, const PrintContext& ctx);
 
         template <typename Value>
         void PrintValue(const Value& value, const PrintContext& ctx) {
