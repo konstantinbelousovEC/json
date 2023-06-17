@@ -174,24 +174,24 @@ namespace tests {
 
         json::Node dbl_node{3.5};
         must_throw_logic_error([&dbl_node] {
-            dbl_node.as_int();
+            static_cast<void>(dbl_node.as_int());
         });
         must_throw_logic_error([&dbl_node] {
-            dbl_node.as_string();
+            static_cast<void>(dbl_node.as_string());
         });
         must_throw_logic_error([&dbl_node] {
-            dbl_node.as_array();
+            static_cast<void>(dbl_node.as_array());
         });
 
         json::Node array_node{json::Array{}};
         must_throw_logic_error([&array_node] {
-            array_node.as_dict();
+            static_cast<void>(array_node.as_dict());
         });
         must_throw_logic_error([&array_node] {
-            array_node.as_double();
+            static_cast<void>(array_node.as_double());
         });
         must_throw_logic_error([&array_node] {
-            array_node.as_bool();
+            static_cast<void>(array_node.as_bool());
         });
     }
 
