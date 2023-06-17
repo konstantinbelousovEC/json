@@ -24,31 +24,31 @@ namespace json {
 
         Node(Value&& v) : variant(std::move(v)) {};
 
-        [[nodiscard]] bool IsInt() const;
-        [[nodiscard]] bool IsPureDouble() const;
-        [[nodiscard]] bool IsDouble() const;
-        [[nodiscard]] bool IsBool() const;
-        [[nodiscard]] bool IsNull() const;
-        [[nodiscard]] bool IsArray() const;
-        [[nodiscard]] bool IsString() const;
-        [[nodiscard]] bool IsDict() const;
+        [[nodiscard]] bool is_int() const;
+        [[nodiscard]] bool is_pure_double() const;
+        [[nodiscard]] bool is_double() const;
+        [[nodiscard]] bool is_bool() const;
+        [[nodiscard]] bool is_null() const;
+        [[nodiscard]] bool is_array() const;
+        [[nodiscard]] bool is_string() const;
+        [[nodiscard]] bool is_dict() const;
 
-        [[nodiscard]] int AsInt() const;
-        [[nodiscard]] double AsDouble() const;
-        [[nodiscard]] bool AsBool() const;
+        [[nodiscard]] int as_int() const;
+        [[nodiscard]] double as_double() const;
+        [[nodiscard]] bool as_bool() const;
 
-        [[nodiscard]] const std::string& AsString() const;
+        [[nodiscard]] const std::string& as_string() const;
 
-        [[nodiscard]] Array& AsArray();
-        [[nodiscard]] const Array& AsArray() const;
-        [[nodiscard]] Dict& AsDict();
-        [[nodiscard]] const Dict& AsDict() const;
+        [[nodiscard]] Array& as_array();
+        [[nodiscard]] const Array& as_array() const;
+        [[nodiscard]] Dict& as_dict();
+        [[nodiscard]] const Dict& as_dict() const;
 
-        [[nodiscard]] const Value& GetValue() const;
+        [[nodiscard]] const Value& get_value() const;
     };
 
     inline bool operator==(const Node& lhs, const Node& rhs) {
-        return lhs.GetValue() == rhs.GetValue();
+        return lhs.get_value() == rhs.get_value();
     }
 
     inline bool operator!=(const Node& lhs, const Node& rhs) {
@@ -58,22 +58,22 @@ namespace json {
     class Document {
     public:
         explicit Document(Node root);
-        const Node& GetRoot() const;
+        const Node& get_root() const;
 
     private:
         Node root_;
     };
 
     inline bool operator==(const Document& lhs, const Document& rhs) {
-        return lhs.GetRoot() == rhs.GetRoot();
+        return lhs.get_root() == rhs.get_root();
     }
 
     inline bool operator!=(const Document& lhs, const Document& rhs) {
         return !(lhs == rhs);
     }
 
-    Document Load(std::istream& input);
+    Document load(std::istream& input);
 
-    void Print(const Document& doc, std::ostream& output);
+    void print(const Document& doc, std::ostream& output);
 
 } // namespace

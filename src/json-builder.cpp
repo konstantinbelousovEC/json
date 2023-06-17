@@ -4,7 +4,7 @@ namespace json {
 
     Builder& Builder::Key(std::string key) {
         if (root_ != nullptr) throw std::logic_error("calling Key-method for ready object");
-        if (nodes_stack_.back()->IsDict()) {
+        if (nodes_stack_.back()->is_dict()) {
             Node::Value str{std::move(key)};
             nodes_.emplace_back(std::move(str));
             nodes_stack_.push_back(&nodes_.back());
@@ -18,12 +18,12 @@ namespace json {
         if (root_ != nullptr) throw std::logic_error("calling Value-method for ready object");
         if (root_ == nullptr && nodes_stack_.empty()) {
             root_ = std::move(value);
-        } else if (nodes_stack_.back()->IsArray()) {
-            nodes_stack_.back()->AsArray().emplace_back(std::move(value));
-        } else if (nodes_stack_.back()->IsString()) {
+        } else if (nodes_stack_.back()->is_array()) {
+            nodes_stack_.back()->as_array().emplace_back(std::move(value));
+        } else if (nodes_stack_.back()->is_string()) {
             Node& node_ref =*nodes_stack_.back();
             nodes_stack_.pop_back();
-            nodes_stack_.back()->AsDict().insert({node_ref.AsString(), std::move(value)});
+            nodes_stack_.back()->as_dict().insert({node_ref.as_string(), std::move(value)});
         } else {
             throw std::logic_error("calling Value-method in wrong place");
         }
@@ -42,7 +42,7 @@ namespace json {
 
     Builder& Builder::EndDict() {
         if (nodes_stack_.empty()) throw std::logic_error("calling EndDict-method for ready or empty object");
-        if (nodes_stack_.back()->IsDict()) {
+        if (nodes_stack_.back()->is_dict()) {
             EndData();
             return *this;
         } else {
@@ -52,7 +52,7 @@ namespace json {
 
     Builder& Builder::EndArray() {
         if (nodes_stack_.empty()) throw std::logic_error("calling EndArray-method for ready or empty object");
-        if (nodes_stack_.back()->IsArray()) {
+        if (nodes_stack_.back()->is_array()) {
             EndData();
             return *this;
         } else {
@@ -73,12 +73,12 @@ namespace json {
         nodes_stack_.pop_back();
         if (nodes_stack_.empty()) {
             root_ = std::move(node_ref);
-        } else if (nodes_stack_.back()->IsArray()) {
-            nodes_stack_.back()->AsArray().emplace_back(std::move(node_ref));
-        } else if (nodes_stack_.back()->IsString()) {
+        } else if (nodes_stack_.back()->is_array()) {
+            nodes_stack_.back()->as_array().emplace_back(std::move(node_ref));
+        } else if (nodes_stack_.back()->is_string()) {
             Node& str_node_ref = *nodes_stack_.back();
             nodes_stack_.pop_back();
-            nodes_stack_.back()->AsDict().insert({str_node_ref.AsString(), std::move(node_ref)});
+            nodes_stack_.back()->as_dict().insert({str_node_ref.as_string(), std::move(node_ref)});
         }
     }
 

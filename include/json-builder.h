@@ -90,7 +90,7 @@ namespace json {
             str = "Dict";
         }
         if (root_ != nullptr) throw std::logic_error("calling Start" + str + "-method for ready object");
-        if (nodes_stack_.empty() || nodes_stack_.back()->IsArray() || nodes_stack_.back()->IsString()) {
+        if (nodes_stack_.empty() || nodes_stack_.back()->is_array() || nodes_stack_.back()->is_string()) {
             nodes_.emplace_back(obj);
             nodes_stack_.push_back(&nodes_.back());
         } else {

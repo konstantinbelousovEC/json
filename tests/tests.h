@@ -3,6 +3,6 @@
 
 namespace tests {
 
-    void RunTest();
+    void run_test();
 
 }
