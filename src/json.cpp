@@ -6,7 +6,7 @@ namespace json {
 
     // class Node definitions --------------------------------------------------
 
-    using Value = Node::Value;
+    using value = Node::value;
 
     bool Node::is_int() const {
         return std::holds_alternative<int>(*this);
@@ -80,7 +80,7 @@ namespace json {
         return std::get<Dict>(*this);
     }
 
-    const Value& Node::get_value() const {
+    const value& Node::get_value() const {
         return *this;
     }
 
@@ -315,8 +315,8 @@ namespace json {
 
         void print_node(const Node& node, const PrintContext& ctx);
 
-        template <typename Value>
-        void print_value(const Value& value, const PrintContext& ctx) {
+        template <typename value>
+        void print_value(const value& value, const PrintContext& ctx) {
             ctx.out << value;
         }
 

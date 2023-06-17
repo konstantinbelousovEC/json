@@ -199,20 +199,20 @@ namespace tests {
         std::stringstream ss;
         auto doc1 = json::Document{
                 json::Builder{}
-                        .StartDict()
-                            .Key("key1"s).Value(123)
-                            .Key("key2"s).Value("value2"s)
-                            .Key("key3"s).StartArray()
-                                                .Value(456)
-                                                .StartDict()
-                                                .EndDict()
-                                                .StartDict()
-                                                        .Key(""s).Value(nullptr)
-                                                .EndDict()
-                                                .Value(""s)
-                                         .EndArray()
-                        .EndDict()
-                        .Build()
+                        .start_dict()
+                            .key("key1"s).value(123)
+                            .key("key2"s).value("value2"s)
+                            .key("key3"s).start_array()
+                                                .value(456)
+                                                .start_dict()
+                                                .end_dict()
+                                                .start_dict()
+                                                        .key(""s).value(nullptr)
+                                                .end_dict()
+                                                .value(""s)
+                                         .end_array()
+                        .end_dict()
+                        .build()
         };
 
         json::print(doc1, ss);
@@ -222,18 +222,18 @@ namespace tests {
 
 //        Правила построения цепочек вызовов методов json builder
 
-//        1. Непосредственно после Key вызван не Value, не StartDict и не StartArray.
-//        2. После вызова Value, последовавшего за вызовом Key, вызван не Key и не EndDict.
-//        3. За вызовом StartDict следует не Key и не EndDict.
-//        4. За вызовом StartArray следует не Value, не StartDict, не StartArray и не EndArray.
-//        5. После вызова StartArray и серии Value следует не Value, не StartDict, не StartArray и не EndArray.
+//        1. Непосредственно после key вызван не value, не start_dict и не start_array.
+//        2. После вызова value, последовавшего за вызовом key, вызван не key и не end_dict.
+//        3. За вызовом start_dict следует не key и не end_dict.
+//        4. За вызовом start_array следует не value, не start_dict, не start_array и не end_array.
+//        5. После вызова start_array и серии value следует не value, не start_dict, не start_array и не end_array.
 
-//        json::Builder{}.StartDict().Build();  // правило 3
-//        json::Builder{}.StartDict().Key("1"s).Value(1).Value(1);  // правило 2
-//        json::Builder{}.StartDict().Key("1"s).Key(""s);  // правило 1
-//        json::Builder{}.StartArray().Key("1"s);  // правило 4
-//        json::Builder{}.StartArray().EndDict();  // правило 4
-//        json::Builder{}.StartArray().Value(1).Value(2).EndDict();  // правило 5
+//        json::Builder{}.start_dict().build();  // правило 3
+//        json::Builder{}.start_dict().key("1"s).value(1).value(1);  // правило 2
+//        json::Builder{}.start_dict().key("1"s).key(""s);  // правило 1
+//        json::Builder{}.start_array().key("1"s);  // правило 4
+//        json::Builder{}.start_array().end_dict();  // правило 4
+//        json::Builder{}.start_array().value(1).value(2).end_dict();  // правило 5
     }
 
     void benchmark() {

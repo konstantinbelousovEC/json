@@ -17,72 +17,72 @@ namespace json {
         class ItemContext;
 
         template<typename T>
-        void StartData(T obj);
-        void EndData();
+        void start_data(T obj);
+        void end_data();
         Node root_ = nullptr;
         std::vector<Node*> nodes_stack_;
         std::deque<Node> nodes_;
 
     public:
-        Builder& Key(std::string key);
-        Builder& Value(Node::Value value);
-        DictItemContext StartDict();
-        ArrayItemContext StartArray();
-        Builder& EndDict();
-        Builder& EndArray();
-        json::Node Build();
+        Builder& key(std::string key);
+        Builder& value(Node::value value);
+        DictItemContext start_dict();
+        ArrayItemContext start_array();
+        Builder& end_dict();
+        Builder& end_array();
+        json::Node build();
 
     };
 
     class Builder::ItemContext {
     public:
         ItemContext(Builder& builder) : builder_(builder) {};
-        ValueAfterArrayContext Value(Node::Value value);
-        DictItemContext StartDict();
-        ArrayItemContext StartArray();
-        Builder& EndDict();
-        Builder& EndArray();
+        ValueAfterArrayContext value(Node::value value);
+        DictItemContext start_dict();
+        ArrayItemContext start_array();
+        Builder& end_dict();
+        Builder& end_array();
     protected:
         Builder& builder_;
     };
 
     class Builder::ValueAfterKeyContext : public ItemContext {
     public:
-        KeyItemContext Key(std::string key);
-        ValueAfterArrayContext Value(Node::Value value) = delete;
-        Builder& EndArray() = delete;
-        DictItemContext StartDict() = delete;
-        ArrayItemContext StartArray() = delete;
+        KeyItemContext key(std::string key);
+        ValueAfterArrayContext value(Node::value value) = delete;
+        Builder& end_array() = delete;
+        DictItemContext start_dict() = delete;
+        ArrayItemContext start_array() = delete;
     };
 
     class Builder::ValueAfterArrayContext : public ItemContext {
     public:
-        Builder& EndDict() = delete;
+        Builder& end_dict() = delete;
     };
 
     class Builder::KeyItemContext : public ItemContext {
     public:
-        ValueAfterKeyContext Value(Node::Value value);
-        Builder& EndDict() = delete;
-        Builder& EndArray() = delete;
+        ValueAfterKeyContext value(Node::value value);
+        Builder& end_dict() = delete;
+        Builder& end_array() = delete;
     };
 
     class Builder::DictItemContext : public ItemContext {
     public:
-        KeyItemContext Key(std::string key);
-        ValueAfterArrayContext Value(Node::Value value) = delete;
-        Builder& EndArray() = delete;
-        DictItemContext StartDict() = delete;
-        ArrayItemContext StartArray() = delete;
+        KeyItemContext key(std::string key);
+        ValueAfterArrayContext value(Node::value value) = delete;
+        Builder& end_array() = delete;
+        DictItemContext start_dict() = delete;
+        ArrayItemContext start_array() = delete;
     };
 
     class Builder::ArrayItemContext : public ItemContext {
     public:
-        Builder& EndDict() = delete;
+        Builder& end_dict() = delete;
     };
 
     template<typename T>
-    void Builder::StartData(T obj) {
+    void Builder::start_data(T obj) {
         std::string str;
         if constexpr (std::is_same<T, Array>::value) {
             str = "Array";

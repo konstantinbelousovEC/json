@@ -20,9 +20,9 @@ namespace json {
     class Node final : private std::variant<std::nullptr_t, Array, Dict, bool, int, double, std::string> {
     public:
         using variant::variant;
-        using Value = variant;
+        using value = variant;
 
-        Node(Value&& v) : variant(std::move(v)) {};
+        Node(value&& v) : variant(std::move(v)) {};
 
         [[nodiscard]] bool is_int() const;
         [[nodiscard]] bool is_pure_double() const;
@@ -44,7 +44,7 @@ namespace json {
         [[nodiscard]] Dict& as_dict();
         [[nodiscard]] const Dict& as_dict() const;
 
-        [[nodiscard]] const Value& get_value() const;
+        [[nodiscard]] const value& get_value() const;
     };
 
     inline bool operator==(const Node& lhs, const Node& rhs) {
