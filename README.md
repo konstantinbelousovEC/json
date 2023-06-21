@@ -1,3 +1,7 @@
+# Сборка
+
+Проект может быть собран с помощью *cmake* ([**CMakeLists.txt**](https://github.com/konstantinbelousovEC/json/blob/main/CMakeLists.txt)) в статическую библиотеку в режимах **debug** и **release**, а также в исполняемый файл с запуском [*тестов*](https://github.com/konstantinbelousovEC/json/blob/main/tests/tests.cpp) из файла **main.cpp**.
+
 ## JSON
 
 
