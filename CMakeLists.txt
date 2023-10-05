@@ -12,7 +12,7 @@
 cmake_minimum_required(VERSION 3.25)
 project(json-my-lib)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 # Пути к исходным файлам
 set(SOURCES src/json.cpp src/json-builder.cpp)
@@ -52,5 +52,5 @@ set_target_properties(json-my-lib-release PROPERTIES PREFIX "")
 set_target_properties(json-my-lib-release PROPERTIES OUTPUT_NAME "libjson-my-lib")
 
 # Добавление исполняемого файла для сборки проекта
-add_executable(test-executable main.cpp tests/log-duration.h tests/test-runner.h tests/tests.h tests/tests.cpp)
+add_executable(test-executable main.cpp include/json.h include/json-builder.h src/json.cpp src/json-builder.cpp tests/log-duration.h tests/test-runner.h tests/tests.h tests/tests.cpp)
 target_link_libraries(test-executable json-my-lib-debug)  # Используем debug-библиотеку

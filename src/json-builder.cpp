@@ -4,6 +4,7 @@ namespace json {
 
     Builder& Builder::key(std::string key) {
         if (root_ != nullptr) throw std::logic_error("calling key method for ready object");
+
         if (nodes_stack_.back()->is_dict()) {
             Node::value str{std::move(key)};
             nodes_.emplace_back(std::move(str));
@@ -11,11 +12,13 @@ namespace json {
         } else {
             throw std::logic_error("calling key method in wrong place");
         }
+
         return *this;
     }
 
     Builder& Builder::value(Node::value value) {
         if (root_ != nullptr) throw std::logic_error("calling value method for ready object");
+
         if (root_ == nullptr && nodes_stack_.empty()) {
             root_ = std::move(value);
         } else if (nodes_stack_.back()->is_array()) {
@@ -27,6 +30,7 @@ namespace json {
         } else {
             throw std::logic_error("calling value method in wrong place");
         }
+
         return *this;
     }
 
@@ -42,6 +46,7 @@ namespace json {
 
     Builder& Builder::end_dict() {
         if (nodes_stack_.empty()) throw std::logic_error("calling end_dict method for ready or empty object");
+
         if (nodes_stack_.back()->is_dict()) {
             end_data();
             return *this;
@@ -52,6 +57,7 @@ namespace json {
 
     Builder& Builder::end_array() {
         if (nodes_stack_.empty()) throw std::logic_error("calling end_array method for ready or empty object");
+
         if (nodes_stack_.back()->is_array()) {
             end_data();
             return *this;
@@ -71,6 +77,7 @@ namespace json {
     void Builder::end_data() {
         Node& node_ref = *nodes_stack_.back();
         nodes_stack_.pop_back();
+
         if (nodes_stack_.empty()) {
             root_ = std::move(node_ref);
         } else if (nodes_stack_.back()->is_array()) {
@@ -121,4 +128,5 @@ namespace json {
         builder_.key(std::move(key));
         return {*this};
     }
-}
+
+}  // namespace json

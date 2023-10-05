@@ -5,4 +5,4 @@ namespace tests {
 
     void run_test();
 
-}
+}  // namespace tests

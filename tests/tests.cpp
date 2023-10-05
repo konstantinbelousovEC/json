@@ -104,6 +104,8 @@ namespace tests {
 
         // Пробелы, табуляции и символы перевода строки между токенами JSON файла игнорируются
         ASSERT(load_json("\t\r\n\n\r \"Hello\" \t\r\n\n\r ").get_root() == json::Node{"Hello"s})
+
+        ASSERT(load_json("\"Привет, мир!\"").get_root() == json::Node{"Привет, мир!"});
     }
 
     void json_bool_values() {
