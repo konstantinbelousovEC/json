@@ -1,3 +1,6 @@
+// @copyright Copyright (c) 2023. Created by Konstantin Belousov.
+// All rights reserved.
+
 #include "../include/json-builder.h"
 
 namespace json {

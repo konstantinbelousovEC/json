@@ -1,3 +1,6 @@
+// @copyright Copyright (c) 2023. Created by Konstantin Belousov.
+// All rights reserved.
+
 #pragma once
 
 #include <iostream>
@@ -24,7 +27,7 @@ namespace TestRunnerPrivate {
         return os << "}";
     }
 
-} // namespace
+}  // namespace TestRunnerPrivate
 
 template <class T>
 std::ostream& operator<<(std::ostream& os, const std::vector<T>& s) {

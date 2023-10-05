@@ -1,3 +1,6 @@
+// @copyright Copyright (c) 2023. Created by Konstantin Belousov.
+// All rights reserved.
+
 #pragma once
 
 #include <iostream>
@@ -73,6 +76,10 @@ namespace json {
     }
 
     Document load(std::istream& input);
+
+    Document load(const std::string& input);
+
+    Document load(std::string&& input);
 
     void print(const Document& doc, std::ostream& output);
 

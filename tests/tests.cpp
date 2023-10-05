@@ -1,3 +1,6 @@
+// @copyright Copyright (c) 2023. Created by Konstantin Belousov.
+// All rights reserved.
+
 #include "tests.h"
 #include "log-duration.h"
 
@@ -10,14 +13,12 @@ namespace tests {
 
     using namespace std::string_literals;
 
-    // ------------- supportive functions declarations -------------
     std::string print_node(const json::Node& node);
     json::Document load_json(const std::string& s);
     void must_fail_to_load(const std::string& s);
 
     template <typename Fn>
     void must_throw_logic_error(Fn fn);
-    // ------------------------------------------------------------
 
     void json_null_node_constructor() {
         json::Node null_node;
@@ -40,7 +41,6 @@ namespace tests {
         ASSERT(node.is_null())
         ASSERT(node == null_node)
 
-        // Пробелы, табуляции и символы перевода строки между токенами JSON файла игнорируются
         ASSERT(load_json(" \t\r\n\n\r null \t\r\n\n\r "s).get_root() == null_node)
     }
 
@@ -49,21 +49,18 @@ namespace tests {
         ASSERT(int_node.is_int())
         ASSERT(int_node.as_int() == 42)
 
-        // целые числа являются подмножеством чисел с плавающей запятой
         ASSERT(int_node.is_double())
 
-        // Когда узел хранит int, можно получить соответствующее ему double-значение
         ASSERT(int_node.as_double() == 42.0)
         ASSERT(!int_node.is_pure_double())
         ASSERT(int_node == json::Node{42})
 
-        // int и double - разные типы, поэтому не равны, даже когда хранят равные семантические значения
         ASSERT(int_node != json::Node{42.0})
 
         const json::Node dbl_node{123.45};
         ASSERT(dbl_node.is_double())
         ASSERT(dbl_node.as_double() == 123.45)
-        ASSERT(dbl_node.is_pure_double())  // Значение содержит число с плавающей запятой
+        ASSERT(dbl_node.is_pure_double())
         ASSERT(!dbl_node.is_int())
 
         ASSERT(print_node(int_node) == "42"s)
@@ -81,7 +78,6 @@ namespace tests {
         ASSERT(load_json("0").get_root() == json::Node{0})
         ASSERT(load_json("0.0").get_root() == json::Node{0.0})
 
-        // Пробелы, табуляции и символы перевода строки между токенами JSON файла игнорируются
         ASSERT(load_json(" \t\r\n\n\r 0.0 \t\r\n\n\r ").get_root() == json::Node{0.0})
     }
 
@@ -96,15 +92,11 @@ namespace tests {
         ASSERT(print_node(str_node) == "\"Hello, \\\"everybody\\\"\""s)
         ASSERT(load_json(print_node(str_node)).get_root() == str_node)
 
-        const std::string escape_chars
-                = R"("\r\n\t\"\\")"s;  // При чтении строкового литерала последовательности \r,\n,\t,\\,\"
-        // преобразовываться в соответствующие символы.
-        // При выводе эти символы должны экранироваться, кроме \t.
+        const std::string escape_chars = R"("\r\n\t\"\\")"s;
+
         ASSERT(print_node(load_json(escape_chars).get_root()) == "\"\\r\\n\t\\\"\\\\\""s)
 
-        // Пробелы, табуляции и символы перевода строки между токенами JSON файла игнорируются
         ASSERT(load_json("\t\r\n\n\r \"Hello\" \t\r\n\n\r ").get_root() == json::Node{"Hello"s})
-
         ASSERT(load_json("\"Привет, мир!\"").get_root() == json::Node{"Привет, мир!"});
     }
 
@@ -137,9 +129,7 @@ namespace tests {
         ASSERT(load_json(print_node(arr_node)).get_root() == arr_node)
         ASSERT(load_json(R"(  [ 1  ,  1.23,  "Hello"   ]   )"s).get_root() == arr_node)
 
-        // Пробелы, табуляции и символы перевода строки между токенами JSON файла игнорируются
-        ASSERT(load_json("[ 1 \r \n ,  \r\n\t 1.23, \n \n  \t\t  \"Hello\" \t \n  ] \n  "s).get_root()
-               == arr_node)
+        ASSERT(load_json("[ 1 \r \n ,  \r\n\t 1.23, \n \n  \t\t  \"Hello\" \t \n  ] \n  "s).get_root() == arr_node)
     }
 
     void json_dictionary_values() {
@@ -153,12 +143,7 @@ namespace tests {
         ASSERT(load_json("{ \"key1\": \"value1\", \"key2\": 42 }"s).get_root() == dict_node)
         ASSERT(load_json(print_node(dict_node)).get_root() == dict_node)
 
-        // Пробелы, табуляции и символы перевода строки между токенами JSON файла игнорируются
-        ASSERT(
-                load_json(
-                        "\t\r\n\n\r { \t\r\n\n\r \"key1\" \t\r\n\n\r: \t\r\n\n\r \"value1\" \t\r\n\n\r , \t\r\n\n\r \"key2\" \t\r\n\n\r : \t\r\n\n\r 42 \t\r\n\n\r } \t\r\n\n\r"s)
-                        .get_root()
-                == dict_node)
+        ASSERT(load_json("\t\r\n\n\r { \t\r\n\n\r \"key1\" \t\r\n\n\r: \t\r\n\n\r \"value1\" \t\r\n\n\r , \t\r\n\n\r \"key2\" \t\r\n\n\r : \t\r\n\n\r 42 \t\r\n\n\r } \t\r\n\n\r"s).get_root() == dict_node)
     }
 
     void json_error_handling() {
@@ -168,7 +153,7 @@ namespace tests {
         must_fail_to_load("{"s);
         must_fail_to_load("}"s);
 
-        must_fail_to_load("\"hello"s);  // незакрытая кавычка
+        must_fail_to_load("\"hello"s);
 
         must_fail_to_load("tru"s);
         must_fail_to_load("fals"s);
@@ -221,21 +206,6 @@ namespace tests {
         json::Document doc2 = json::load(ss);
 
         ASSERT(doc1 == doc2);
-
-//        Правила построения цепочек вызовов методов json builder
-
-//        1. Непосредственно после key вызван не value, не start_dict и не start_array.
-//        2. После вызова value, последовавшего за вызовом key, вызван не key и не end_dict.
-//        3. За вызовом start_dict следует не key и не end_dict.
-//        4. За вызовом start_array следует не value, не start_dict, не start_array и не end_array.
-//        5. После вызова start_array и серии value следует не value, не start_dict, не start_array и не end_array.
-
-//        json::Builder{}.start_dict().build();  // правило 3
-//        json::Builder{}.start_dict().key("1"s).value(1).value(1);  // правило 2
-//        json::Builder{}.start_dict().key("1"s).key(""s);  // правило 1
-//        json::Builder{}.start_array().key("1"s);  // правило 4
-//        json::Builder{}.start_array().end_dict();  // правило 4
-//        json::Builder{}.start_array().value(1).value(2).end_dict();  // правило 5
     }
 
     void benchmark() {
@@ -286,7 +256,6 @@ namespace tests {
         benchmark();
     }
 
-    // ------------- supportive functions definitions -------------
     std::string print_node(const json::Node& node) {
         std::ostringstream out;
         print(json::Document{node}, out);
@@ -334,6 +303,5 @@ namespace tests {
             ASSERT(false)
         }
     }
-    // ------------------------------------------------------------
 
 } // namespace

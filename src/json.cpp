@@ -1,4 +1,9 @@
+// @copyright Copyright (c) 2023. Created by Konstantin Belousov.
+// All rights reserved.
+
+#include <sstream>
 #include "../include/json.h"
+
 
 namespace json {
 
@@ -256,8 +261,8 @@ namespace json {
                     try {
                         return std::stoi(parsed_num);
                     } catch (...) {
-                        // В случае неудачи, например, при переполнении
-                        // код ниже попробует преобразовать строку в double
+                        // In case of failure, for example, with overflow,
+                        // the code below will try to convert the string to double
                     }
                 }
                 return std::stod(parsed_num);
@@ -409,6 +414,19 @@ namespace json {
 
     Document load(std::istream& input) {
         return Document{load_node(input)};
+    }
+
+    Document load(const std::string& input) {
+        std::istringstream strm(input);
+        return load(strm);
+    }
+
+    // C++20 gives us stringstreams constructors that takes rvalue reference to basic_string
+    // at the time of this commit, on my M1 ARM Mac only gcc supports this option, clang does not.
+    // checked for gcc-13. clang 13-16
+    Document load(std::string&& input) {
+        std::istringstream strm(std::move(input));
+        return load(strm);
     }
 
     void print(const Document& doc, std::ostream& output) {
