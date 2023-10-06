@@ -2,7 +2,7 @@
 // All rights reserved.
 
 #include <sstream>
-#include "../include/json.h"
+#include "json.h"
 
 
 namespace json {

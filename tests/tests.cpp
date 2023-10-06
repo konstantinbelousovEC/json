@@ -4,8 +4,8 @@
 #include "tests.h"
 #include "log-duration.h"
 
-#include "../include/json.h"
-#include "../include/json-builder.h"
+#include "../json.h"
+#include "../json-builder.h"
 
 #include <chrono>
 
